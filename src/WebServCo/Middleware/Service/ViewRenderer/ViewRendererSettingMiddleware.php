@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WebServCo\Middleware\Service\ViewRenderer;
 
+use OutOfBoundsException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,7 +26,12 @@ final class ViewRendererSettingMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $acceptHeaderValue = $this->serverHeadersAcceptProcessor->getAcceptHeaderValue($request);
+        try {
+            $acceptHeaderValue = $this->serverHeadersAcceptProcessor->getAcceptHeaderValue($request);
+        } catch (OutOfBoundsException) {
+            // "Accept header array is empty." Assume accept anything.
+            $acceptHeaderValue = '*/*;q=0.8';
+        }
         $acceptList = $this->serverHeadersAcceptProcessor->processAcceptList($acceptHeaderValue);
         $viewRenderer = $this->getViewRenderer($acceptList);
 
