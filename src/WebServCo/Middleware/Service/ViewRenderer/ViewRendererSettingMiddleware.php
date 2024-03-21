@@ -12,6 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use UnexpectedValueException;
 use WebServCo\Http\Contract\Message\Request\Server\ServerHeadersAcceptProcessorInterface;
 use WebServCo\View\Contract\HTMLRendererInterface;
+use WebServCo\View\Contract\JSONAPIRendererInterface;
 use WebServCo\View\Contract\JSONRendererInterface;
 use WebServCo\View\Contract\ViewRendererInterface;
 
@@ -64,6 +65,8 @@ final class ViewRendererSettingMiddleware implements MiddlewareInterface
         return match ($accept) {
             // JSON
             JSONRendererInterface::CONTENT_TYPE => JSONRendererInterface::class,
+            // JSON API
+            JSONAPIRendererInterface::CONTENT_TYPE => JSONAPIRendererInterface::class,
             // HTML
             HTMLRendererInterface::CONTENT_TYPE => HTMLRendererInterface::class,
             // General; 'accept anything', the 'any' flag
