@@ -8,20 +8,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use WebServCo\Middleware\Service\AbstractRouteMiddleware;
 use WebServCo\Route\Contract\ThreePart\RoutePartsInterface;
 
 use function array_key_exists;
 use function explode;
-use function htmlspecialchars;
 use function in_array;
-use function strip_tags;
-use function strlen;
 use function strpos;
-use function substr;
-use function trim;
-
-use const ENT_QUOTES;
-use const ENT_SUBSTITUTE;
 
 /**
  * Route middleware.
@@ -30,22 +23,8 @@ use const ENT_SUBSTITUTE;
  * Uses the 3 part route idea from the WSFW.
  * Adds routing information to request.
  */
-final class RouteMiddleware implements MiddlewareInterface, RoutePartsInterface
+final class RouteMiddleware extends AbstractRouteMiddleware implements MiddlewareInterface, RoutePartsInterface
 {
-    /**
-     * Constructor.
-     *
-     * $basePath is the root of the application.
-     * Examples:
-     * - '/' if app is not in subfolder, and we should handle all routing.
-     * - '/api' if we should handle only requests that start with '/api'
-     *
-     * @param array<int,string> $handledPaths a list of request paths handled by this middleware
-     */
-    public function __construct(private string $basePath, private ?string $defaultPath, private array $handledPaths)
-    {
-    }
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();
@@ -59,7 +38,7 @@ final class RouteMiddleware implements MiddlewareInterface, RoutePartsInterface
             return $handler->handle($request);
         }
 
-        $path = $this->processPath($path);
+        $path = $this->parsePath($path);
 
         /**
          * Get path parts.
@@ -99,31 +78,5 @@ final class RouteMiddleware implements MiddlewareInterface, RoutePartsInterface
 
         // Pass to the next handler.
         return $handler->handle($request);
-    }
-
-    private function processPath(string $path): string
-    {
-        // Remove basePath
-        $path = substr($path, strlen($this->basePath));
-        $path = trim($path, '/');
-
-        // Handle "home page" requests.
-        if ($path === '' && $this->defaultPath !== null) {
-            return $this->defaultPath;
-        }
-
-        return $path;
-    }
-
-    /**
-     * Sanitize.
-     *
-     * @todo improve sanitize route part.
-     */
-    private function sanitizeRoutePart(string $input): string
-    {
-        $result = strip_tags($input);
-
-        return htmlspecialchars($result, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }
