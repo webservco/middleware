@@ -17,14 +17,14 @@ use function is_string;
 /**
  * Resource middleware that goes along with the three part route middleware.
  *
- * Processes requests that have already been routed by the Route midleware.
+ * Processes requests that have already been routed by the Route middleware.
  */
 final class ResourceMiddleware implements MiddlewareInterface, RoutePartsInterface
 {
     /**
      * Constructor.
      *
-     * @param array<string,\Psr\Http\Server\RequestHandlerInterface> $handlers list of hadlers used by this middleware.
+     * @param array<string,\Psr\Http\Server\RequestHandlerInterface> $handlers list of handlers used by this middleware.
      */
     public function __construct(private array $handlers)
     {
