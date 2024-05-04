@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use UnexpectedValueException;
-use WebServCo\Http\Contract\Message\Request\Server\ServerHeadersAcceptProcessorInterface;
+use WebServCo\Http\Contract\Message\Request\Server\ServerHeadersAcceptServiceInterface;
 use WebServCo\View\Contract\HTMLRendererInterface;
 use WebServCo\View\Contract\JSONAPIRendererInterface;
 use WebServCo\View\Contract\JSONRendererInterface;
@@ -18,7 +18,7 @@ use WebServCo\View\Contract\ViewRendererInterface;
 
 final class ViewRendererSettingMiddleware implements MiddlewareInterface
 {
-    public function __construct(private ServerHeadersAcceptProcessorInterface $serverHeadersAcceptProcessor)
+    public function __construct(private ServerHeadersAcceptServiceInterface $serverHeadersAcceptService)
     {
     }
 
@@ -28,12 +28,12 @@ final class ViewRendererSettingMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
-            $acceptHeaderValue = $this->serverHeadersAcceptProcessor->getAcceptHeaderValue($request);
+            $acceptHeaderValue = $this->serverHeadersAcceptService->getAcceptHeaderValue($request);
         } catch (OutOfBoundsException) {
             // "Accept header array is empty." Assume accept anything.
             $acceptHeaderValue = '*/*;q=0.8';
         }
-        $acceptList = $this->serverHeadersAcceptProcessor->processAcceptList($acceptHeaderValue);
+        $acceptList = $this->serverHeadersAcceptService->parseAcceptList($acceptHeaderValue);
         $viewRenderer = $this->getViewRenderer($acceptList);
 
         $request = $request->withAttribute('ViewRendererInterface', $viewRenderer);
