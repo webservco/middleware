@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use WebServCo\Middleware\Service\AbstractRouteMiddleware;
-use WebServCo\Route\Contract\Dynamic\RoutePartsInterface;
 
 use function explode;
 use function in_array;
@@ -22,7 +21,7 @@ use function strpos;
  * Dynamic, ie. route can have any number of parts, not just 3 like the ThreePart system.
  * Adds routing information to request.
  */
-final class RouteMiddleware extends AbstractRouteMiddleware implements MiddlewareInterface, RoutePartsInterface
+final class RouteMiddleware extends AbstractRouteMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

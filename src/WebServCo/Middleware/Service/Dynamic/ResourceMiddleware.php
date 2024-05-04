@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use WebServCo\Http\Contract\Message\Request\Server\ServerRequestAttributeServiceInterface;
-use WebServCo\Route\Contract\Dynamic\RoutePartsInterface;
 
 use function array_key_exists;
 
@@ -18,7 +17,7 @@ use function array_key_exists;
  *
  * Processes requests that have already been routed by the Route middleware.
  */
-final class ResourceMiddleware implements MiddlewareInterface, RoutePartsInterface
+final class ResourceMiddleware implements MiddlewareInterface
 {
     /**
      * Constructor.
