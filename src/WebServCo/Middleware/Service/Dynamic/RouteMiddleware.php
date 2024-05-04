@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use WebServCo\Http\Contract\Message\Request\Server\ServerRequestAttributeServiceInterface;
 use WebServCo\Middleware\Service\AbstractRouteMiddleware;
 
 use function explode;
@@ -59,7 +60,7 @@ final class RouteMiddleware extends AbstractRouteMiddleware implements Middlewar
 
         foreach ($parts as $index => $part) {
             $request = $request->withAttribute(
-                sprintf(self::ROUTE_PART_TEMPLATE, $index + 1),
+                sprintf(ServerRequestAttributeServiceInterface::ROUTE_PART_TEMPLATE, $index + 1),
                 $this->sanitizeRoutePart($part),
             );
         }
