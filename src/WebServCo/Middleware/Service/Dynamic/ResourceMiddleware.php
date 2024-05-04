@@ -8,12 +8,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use UnexpectedValueException;
+use WebServCo\Http\Contract\Message\Request\Server\ServerRequestAttributeServiceInterface;
 use WebServCo\Route\Contract\Dynamic\RoutePartsInterface;
 
 use function array_key_exists;
-use function is_string;
-use function sprintf;
 
 /**
  * Resource middleware that goes along with the dynamic parts route middleware.
@@ -27,13 +25,15 @@ final class ResourceMiddleware implements MiddlewareInterface, RoutePartsInterfa
      *
      * @param array<string,\Psr\Http\Server\RequestHandlerInterface> $handlers list of handlers used by this middleware.
      */
-    public function __construct(private array $handlers)
-    {
+    public function __construct(
+        private array $handlers,
+        private ServerRequestAttributeServiceInterface $serverRequestAttributeService,
+    ) {
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $route = $this->getRoutePart(1, $request);
+        $route = $this->serverRequestAttributeService->getRoutePart(1, $request);
 
         if ($route === null) {
             // No route defined, nothing to do.
@@ -50,21 +50,5 @@ final class ResourceMiddleware implements MiddlewareInterface, RoutePartsInterfa
         // All conditions match, go ahead and do our thing.
         // Pass on to dedicated handler.
         return $this->handlers[$route]->handle($request);
-    }
-
-    private function getRoutePart(int $index, ServerRequestInterface $request): ?string
-    {
-        $result = $request->getAttribute(sprintf(self::ROUTE_PART_TEMPLATE, $index), null);
-
-        if ($result === null) {
-            return null;
-        }
-
-        if (!is_string($result)) {
-            // Sanity check, should never happen.
-            throw new UnexpectedValueException('Route is not a string.');
-        }
-
-        return $result;
     }
 }
