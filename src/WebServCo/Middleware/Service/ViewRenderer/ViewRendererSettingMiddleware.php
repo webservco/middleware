@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WebServCo\Middleware\Service\ViewRenderer;
 
 use OutOfBoundsException;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,6 +26,7 @@ final class ViewRendererSettingMiddleware implements MiddlewareInterface
     /**
      * Set the View renderer interface to be use for the response, based on the request.
      */
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {

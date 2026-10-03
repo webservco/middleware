@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WebServCo\Middleware\Service\Exception;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -21,6 +22,7 @@ final class ExceptionHandlerMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WebServCo\Middleware\Service\Dynamic;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -30,6 +31,7 @@ final class ResourceMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $this->serverRequestAttributeService->getRoutePart(1, $request);

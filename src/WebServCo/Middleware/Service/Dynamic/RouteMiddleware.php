@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WebServCo\Middleware\Service\Dynamic;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -24,6 +25,7 @@ use function strpos;
  */
 final class RouteMiddleware extends AbstractRouteMiddleware implements MiddlewareInterface
 {
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();
