@@ -30,10 +30,10 @@
         "psr/http-server-handler": "^1",
         "psr/http-server-middleware": "^1",
         "psr/log": "^3",
-        "webservco/exception": "^1",
-        "webservco/http-request-service": "^1",
-        "webservco/route": "^1",
-        "webservco/view": "^1"
+        "webservco/exception": "^2",
+        "webservco/http-request-service": "^2",
+        "webservco/route": "^2",
+        "webservco/view": "^2"
     },
     "require-dev": {
         "pds/skeleton": "^1",
