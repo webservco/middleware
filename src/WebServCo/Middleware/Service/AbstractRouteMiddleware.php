@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace WebServCo\Middleware\Service;
 
-use function htmlspecialchars;
-use function strip_tags;
+use function preg_match;
+use function rawurldecode;
+use function str_contains;
 use function strlen;
 use function substr;
 use function trim;
-
-use const ENT_QUOTES;
-use const ENT_SUBSTITUTE;
 
 abstract class AbstractRouteMiddleware
 {
@@ -47,14 +45,23 @@ abstract class AbstractRouteMiddleware
     }
 
     /**
-     * Sanitize.
+     * Percent-decode a single route part (path segment).
      *
-     * @todo improve sanitize route part.
+     * `rawurldecode()`, not `urldecode()`: in a path "+" is a plus, not a space.
+     *
+     * Returns null when the decoded value can not be a route part:
+     * it contains a slash (`%2F`) or a null byte (`%00`), or it is not valid UTF-8.
+     *
+     * No HTML escaping: the result is raw user input, escape it where it is output.
      */
-    protected function sanitizeRoutePart(string $input): string
+    protected function decodeRoutePart(string $input): ?string
     {
-        $result = strip_tags($input);
+        $result = rawurldecode($input);
 
-        return htmlspecialchars($result, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        if (str_contains($result, '/') || str_contains($result, "\0") || preg_match('//u', $result) !== 1) {
+            return null;
+        }
+
+        return $result;
     }
 }

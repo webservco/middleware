@@ -12,6 +12,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use WebServCo\Http\Contract\Message\Request\Server\ServerRequestAttributeServiceInterface;
 use WebServCo\Middleware\Service\AbstractRouteMiddleware;
 
+use function array_map;
 use function explode;
 use function in_array;
 use function sprintf;
@@ -44,9 +45,18 @@ final class RouteMiddleware extends AbstractRouteMiddleware implements Middlewar
         /**
          * Get path parts.
          *
-         * Dynamic so do not use a limit
+         * Dynamic so do not use a limit.
+         * Split before decoding, so an encoded slash (`%2F`) can not add a part.
          */
-        $parts = explode('/', $path);
+        $parts = array_map($this->decodeRoutePart(...), explode('/', $path));
+
+        if (in_array(null, $parts, true)) {
+            /**
+             * A part does not decode to a valid route part, nothing to do.
+             * Pass to the next handler.
+             */
+            return $handler->handle($request);
+        }
 
         // Check if path is in allowed list
         if (!in_array($parts[0], $this->handledPaths, true)) {
@@ -63,7 +73,7 @@ final class RouteMiddleware extends AbstractRouteMiddleware implements Middlewar
         foreach ($parts as $index => $part) {
             $request = $request->withAttribute(
                 sprintf(ServerRequestAttributeServiceInterface::ROUTE_PART_TEMPLATE, $index + 1),
-                $this->sanitizeRoutePart($part),
+                $part,
             );
         }
 

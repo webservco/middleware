@@ -58,7 +58,7 @@ $stackHandler->addMiddleware(new ResourceMiddleware(
 
 | Interface | Implementation | Purpose |
 | --- | --- | --- |
-| `\Psr\Http\Server\MiddlewareInterface` | `Service\Dynamic\RouteMiddleware` | Splits the path into `routePart.1`, `routePart.2`, ... request attributes. |
+| `\Psr\Http\Server\MiddlewareInterface` | `Service\Dynamic\RouteMiddleware` | Splits the path into percent-decoded `routePart.1`, `routePart.2`, ... request attributes. |
 | | `Service\Dynamic\ResourceMiddleware` | Passes the request to the handler registered for route part 1. |
 | | `Service\Exception\ExceptionHandlerMiddleware` | Catches exceptions from the next handlers, logs them and returns an error response. |
 | | `Service\ViewRenderer\ViewRendererSettingMiddleware` | Sets the `ViewRendererInterface` request attribute from the `Accept` header. |
@@ -70,7 +70,9 @@ Namespaces are relative to `WebServCo\Middleware\`.
 
 ## Notes
 
-`RouteMiddleware` and `ResourceMiddleware` pass the request on untouched when the path isn't one of theirs. An unknown first path part travels down the whole stack, reaches the fallback handler and gets a 404. Route parts are cleaned with `strip_tags()` and `htmlspecialchars()`.
+`RouteMiddleware` and `ResourceMiddleware` pass the request on untouched when the path isn't one of theirs. An unknown first path part travels down the whole stack, reaches the fallback handler and gets a 404.
+
+Route parts are percent-decoded (`rawurldecode()`) and otherwise left as they are: they are raw user input. Escape them where they are output (`$view->escape()` in templates) and validate them before using them in file paths, queries and so on. A path with a part that decodes to a slash (`%2F`), a null byte (`%00`) or invalid UTF-8 is passed on untouched, like an unknown path.
 
 The error controller gets the exception in the `throwable` request attribute.
 
