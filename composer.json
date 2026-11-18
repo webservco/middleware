@@ -20,7 +20,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "description" : "A PHP component/library. PSR-15 middleware for routing, dispatching to module handlers, exception handling, request logging and choosing the response format.",
+    "description" : "A PHP component/library. PSR-15 middleware for routing, dispatching to module handlers, exception handling, request logging, choosing the response format, the session and the CSRF check.",
     "homepage" : "https://webserv.co",
     "keywords" : [
         "component",
@@ -30,6 +30,7 @@
     "name" : "webservco/middleware",
     "require": {
         "php" : "^8.4",
+        "fig/http-message-util": "^1",
         "psr/http-message": "^2",
         "psr/http-server-handler": "^1",
         "psr/http-server-middleware": "^1",
@@ -37,6 +38,7 @@
         "webservco/exception": "^2",
         "webservco/http-request-service": "^2",
         "webservco/route": "^2",
+        "webservco/session": "^2",
         "webservco/view": "^2"
     },
     "require-dev": {
